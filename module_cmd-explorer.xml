@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_cmd-explorer" default="compile.module.cmd-explorer">
+  <dirname property="module.cmd-explorer.basedir" file="${ant.file.module_cmd-explorer}"/>
+  
+  <property name="module.jdk.home.cmd-explorer" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.cmd-explorer" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.cmd-explorer" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.cmd-explorer" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="cmd-explorer.output.dir" value="${module.cmd-explorer.basedir}/out/production/cmd-explorer"/>
+  <property name="cmd-explorer.testoutput.dir" value="${module.cmd-explorer.basedir}/out/test/cmd-explorer"/>
+  
+  <path id="cmd-explorer.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="cmd-explorer.module.production.classpath">
+    <path refid="${module.jdk.classpath.cmd-explorer}"/>
+  </path>
+  
+  <path id="cmd-explorer.runtime.production.module.classpath">
+    <pathelement location="${cmd-explorer.output.dir}"/>
+  </path>
+  
+  <path id="cmd-explorer.module.classpath">
+    <path refid="${module.jdk.classpath.cmd-explorer}"/>
+    <pathelement location="${cmd-explorer.output.dir}"/>
+  </path>
+  
+  <path id="cmd-explorer.runtime.module.classpath">
+    <pathelement location="${cmd-explorer.testoutput.dir}"/>
+    <pathelement location="${cmd-explorer.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.cmd-explorer">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.cmd-explorer">
+    <patternset refid="excluded.from.module.cmd-explorer"/>
+  </patternset>
+  
+  <path id="cmd-explorer.module.sourcepath">
+    <dirset dir="${module.cmd-explorer.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.cmd-explorer" depends="compile.module.cmd-explorer.production,compile.module.cmd-explorer.tests" description="Compile module cmd-explorer"/>
+  
+  <target name="compile.module.cmd-explorer.production" depends="register.custom.compilers" description="Compile module cmd-explorer; production classes">
+    <mkdir dir="${cmd-explorer.output.dir}"/>
+    <javac2 destdir="${cmd-explorer.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.cmd-explorer}/javac">
+      <compilerarg line="${compiler.args.cmd-explorer}"/>
+      <bootclasspath refid="cmd-explorer.module.bootclasspath"/>
+      <classpath refid="cmd-explorer.module.production.classpath"/>
+      <src refid="cmd-explorer.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.cmd-explorer"/>
+    </javac2>
+    
+    <copy todir="${cmd-explorer.output.dir}">
+      <fileset dir="${module.cmd-explorer.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.cmd-explorer.tests" depends="register.custom.compilers,compile.module.cmd-explorer.production" description="compile module cmd-explorer; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.cmd-explorer" description="cleanup module">
+    <delete dir="${cmd-explorer.output.dir}"/>
+    <delete dir="${cmd-explorer.testoutput.dir}"/>
+  </target>
+</project>
